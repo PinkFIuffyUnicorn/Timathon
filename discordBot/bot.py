@@ -5,7 +5,7 @@ import discord
 import requests
 from random_username.generate import generate_username
 import youtube_dl
-from discord.ext import commands, tasks
+from discord.ext import commands
 import os
 import webbrowser
 from youtube_search import YoutubeSearch
@@ -20,11 +20,11 @@ bot = commands.Bot(command_prefix="~")
 
 @bot.event
 async def on_ready():
-    presence = discord.Game("with myself")
+    presence = discord.Game("with Tim")
     await bot.change_presence(status=discord.Status.idle, activity=presence)
     print("READY")
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief="Usage: ~roll @mention", description="The user plays another player (by their choice) in a random dice roll game")
 async def roll(ctx, against):
     sender = ctx.message.author
     #against = ctx.message.content.split(" ")[1]
@@ -46,12 +46,12 @@ async def roll(ctx, against):
     await ctx.message.channel.send(content=None, embed=embed)
 
 ################################################ RANDOM USERNAME ################################################
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief="Usage: ~username", description="Returns a random username idea")
 async def username(ctx):
     await ctx.message.channel.send(generate_username(1)[0])
 
 ################################################ HANGMAN ################################################
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief="Usage: ~hangman", description="Play the classic hangman game")
 async def hangman(ctx):
     user = ctx.message.author
     await ctx.message.channel.send("Let's play a game!")
@@ -105,83 +105,102 @@ async def hangman(ctx):
                 await ctx.message.channel.send("Character '" + guess.content + "' already guessed!")
 
 ################################################ YOUTUBE - JOIN CHANNEL ################################################
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief="Usage: ~join", description="Joins the voice channel the user is currently connected to")
 async def join(ctx):
-    voiceChannel = ctx.message.author.voice.channel.id
-    vc = bot.get_channel(voiceChannel)
-    a = await vc.connect()
+    voiceState = ctx.message.author.voice
+    if voiceState != None:
+        voiceChannel = voiceState.channel.id
+        botVoiceChannel = ctx.message.guild.voice_client
+        if botVoiceChannel == None:
+            vc = bot.get_channel(voiceChannel)
+            await vc.connect()
+        else:
+            await botVoiceChannel.move_to(voiceState.channel)
+    else:
+        await ctx.message.channel.send("Please connect to voice first")
 
 ################################################ YOUTUBE - PLAY MUSIC ################################################
-@bot.command(pass_context=True)
-async def play(ctx, url):
-    dirCount = len(os.listdir("./Queue"))
-    video = ctx.message.content.split(" ", 1)[1]
-    await ctx.message.channel.send("Searching for: `{}`".format(video))
-    urlSuffix = YoutubeSearch(video).to_dict()[0]["url_suffix"]
-    url = "https://www.youtube.com" + urlSuffix
+@bot.command(pass_context=True, brief="Usage: ~play URL/SongTitle", description="Play song from Youtube (Search by URL or song title)")
+async def play(ctx, songTitle):
+    voiceState = ctx.message.author.voice
+    if voiceState != None:
+        dirCount = len(os.listdir("./Queue"))
+        #video = ctx.message.content.split(" ", 1)[1]
+        await ctx.message.channel.send("Searching for: `{}`".format(songTitle))
+        urlSuffix = YoutubeSearch(songTitle).to_dict()[0]["url_suffix"]
+        url = "https://www.youtube.com" + urlSuffix
 
-    def cleanQueue(path):
-        os.remove(path)
+        def cleanQueue(path):
+            os.remove(path)
 
-        songCounter = len(os.listdir("./Queue"))
+            songCounter = len(os.listdir("./Queue"))
 
-        if songCounter == 0:
-            print("STOP PLAYING")
+            if songCounter == 0:
+                print("STOP PLAYING")
+            else:
+                nextSong = dirName + "/Queue/" + os.listdir("./Queue/")[0]
+                connected.play(discord.FFmpegPCMAudio(nextSong), after=lambda e: cleanQueue(nextSong))
+
+        if dirCount == 0:
+            songNumber = 0
         else:
-            nextSong = dirName + "/Queue/" + os.listdir("./Queue/")[0]
-            connected.play(discord.FFmpegPCMAudio(nextSong), after=lambda e: cleanQueue(nextSong))
-            #await ctx.message.channel.send("Now playing `{}`".format(songNames[os.listdir("./Queue/")[0].replace(".mp3","")]))
-            #await ctx.message.channel.send("A")
-            #a(ctx)
+            songNumber = int(os.listdir("./Queue/")[-1].split(".")[0].split("g")[1]) + 1
 
-    if dirCount == 0:
-        songNumber = 0
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': dirName + '/Queue/song' + str(songNumber) + '.mp3',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ytdl:
+            extract = ytdl.extract_info(url)
+            title = extract["title"]
+            songNames["song" + str(songNumber)] = title
+            await ctx.message.channel.send("Song `{}` added to Queue".format(title))
+
+        if dirCount == 0:
+            server = ctx.message.author.voice.channel
+
+            botVoiceChannel = ctx.message.guild.voice_client
+            if botVoiceChannel == None:
+                vc = bot.get_channel(server.id)
+                await vc.connect()
+            else:
+                await botVoiceChannel.move_to(server)
+
+            connected = ctx.message.guild.voice_client
+            path = dirName + "/Queue/song" + str(int(os.listdir("./Queue/")[-1].split(".")[0].split("g")[1])) + ".mp3"
+            connected.play(discord.FFmpegPCMAudio(path), after=lambda e: cleanQueue(path))
     else:
-        songNumber = int(os.listdir("./Queue/")[-1].split(".")[0].split("g")[1]) + 1
-
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': dirName + '/Queue/song' + str(songNumber) + '.mp3',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-
-    with youtube_dl.YoutubeDL(ydl_opts) as ytdl:
-        extract = ytdl.extract_info(url)
-        title = extract["title"]
-        songNames["song" + str(songNumber)] = title
-        await ctx.message.channel.send("Song `{}` added to Queue".format(title))
-
-    if dirCount == 0:
-        server = ctx.message.author.voice.channel.id
-        vc = bot.get_channel(server)
-        connected = await vc.connect()
-        path = dirName + "/Queue/song" + str(int(os.listdir("./Queue/")[-1].split(".")[0].split("g")[1])) + ".mp3"
-        #await ctx.message.channel.send("Now playing song: `{}`".format(title))
-        connected.play(discord.FFmpegPCMAudio(path), after=lambda e: cleanQueue(path))
+        await ctx.message.channel.send("Please connect to voice first")
 
 ################################################ YOUTUBE - LEAVE THE CHANNEL AND RESET QUEUE ################################################
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief="Usage: ~leave", description="Make the bot leave the current voice channel")
 async def leave(ctx):
-    await bot.voice_clients[0].disconnect()
+    await ctx.message.guild.voice_client.disconnect()
     await ctx.message.channel.send("Cleaned Queue")
     time.sleep(1)
     files = os.listdir("./Queue/")
     for file in files:
         os.remove(dirName + "/Queue/" + file)
 
+@bot.command(pass_context=True, brief="Usage: ~currentSong", description="Returns the current song name")
+async def currentSong(ctx):
+    songName = songNames[str(os.listdir("./Queue")[0]).replace(".mp3","")]
+    await ctx.message.channel.send("Currently playing: `{}`".format(songName))
+
 ################################################ OPEN URL IN BROWSER ################################################
-@bot.command(pass_context=True)
-async def open(ctx, url):
+@bot.command(pass_context=True, brief="Usage: ~browser URL", description="Open a URL in your browser")
+async def browser(ctx, url):
     webbrowser.open(url)
 
 ################################################ TESTING GROUNDS ################################################
-@bot.command(pass_context=True)
-async def test(ctx, a):
-    print(ctx)
-    print(a)
+@bot.command(pass_context=True, brief="Usage: ~test", description="Test shorter commands/functionality")
+async def test(ctx):
+    print("TEST")
 
 bot.run(token)
