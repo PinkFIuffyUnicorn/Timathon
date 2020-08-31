@@ -35,8 +35,13 @@ pip install youtube-search
 ## Running the bot
 1. Move to where you have your bot.py file and run the following: `python bot.py`
 
-
 # Website Setup
+
+## Prerequisites
+1. You have Python >= 3.8 installed
+2. Have Python (>=3.8) in path
+
+## Setting up your environment
 
 1. Run the following in the Command Line Terminal (Administrator):
 ```py
