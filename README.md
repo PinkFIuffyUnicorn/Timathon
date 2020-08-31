@@ -1,6 +1,6 @@
 # Our Setup
 
-Discord Bot Invite: https://discord.com/oauth2/authorize?client_id=436592463529115658&scope=bot&permissions=0
+Discord Bot Invite: https://discord.com/oauth2/authorize?client_id=436592463529115658&scope=bot&permissions=0</br>
 Website URL: 
 
 # Discord Bot Setup
