@@ -198,9 +198,15 @@ async def currentSong(ctx):
 async def browser(ctx, url):
     webbrowser.open(url)
 
+@bot.command(pass_context=True, brief="Usage: ~generateCaption", description="Generates a caption from a random dog image")
+async def generateCaption(ctx):
+    r = requests.get("http://bb7e.ddns.net:19348/").json()
+    await ctx.message.channel.send(r["image_url"])
+    await ctx.message.channel.send("**Caption:** " + r["caption"])
+
 ################################################ TESTING GROUNDS ################################################
 @bot.command(pass_context=True, brief="Usage: ~test", description="Test shorter commands/functionality")
 async def test(ctx):
-    print("TEST")
+    print(ctx.message.guild.voice_client)
 
 bot.run(token)
