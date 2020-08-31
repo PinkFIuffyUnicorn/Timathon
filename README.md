@@ -1,7 +1,7 @@
 # Our Setup
 
 Discord Bot Invite: https://discord.com/oauth2/authorize?client_id=436592463529115658&scope=bot&permissions=0</br>
-Website URL: 
+Website URL: http://timathon.ddns.net:19348/
 
 # Discord Bot Setup
 
@@ -34,3 +34,14 @@ pip install youtube-search
 
 ## Running the bot
 1. Move to where you have your bot.py file and run the following: `python bot.py`
+
+
+# Website Setup
+
+1. Run the following in the Command Line Terminal (Administrator):
+```py
+pip install django
+```
+2. Download the required files (Timathon/Website) and unzip the folder to the desired location
+3. In the Command Line Terminal, move to the folder where you've extracted the files (to where you have manage.py) and run the following command:
+`python manage.py runserver`
