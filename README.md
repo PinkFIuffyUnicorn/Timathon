@@ -1,6 +1,6 @@
-## Discord Bot Setup
+# Discord Bot Setup
 
-# Discord Developer Portal
+## Discord Developer Portal
 
 1. Go to https://discord.com/developers (sign in)
 2. Click create application in the upper right corner
@@ -10,4 +10,4 @@
 Change "ID_HERE" with your bots ID (General Information → CLIENT ID)
 6. Get your token by going to the Bot tab and copying the token (you will need this later to run this bot)
 
-# Setting up your environment
+## Setting up your environment
