@@ -18,11 +18,11 @@ Change "ID_HERE" with your bots ID (General Information → CLIENT ID)
 
 1. Download the necessary files from GIT (Timathon/discordBot/)
 2. Run the following in the Command Line Terminal (Administrator):
-`pip install discord
+```py pip install discord
 pip install requests
 pip install random-username
 pip install youtube-dl
-pip install youtube-search`
+pip install youtube-search```
 
 3. Change the "YOUR_TOKEN_HERE" part of the code (bot.py) with your previously gotten token (refer to point 6. in "Discord Developer Portal" instructions)
 
