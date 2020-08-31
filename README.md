@@ -29,5 +29,4 @@ pip install youtube-search
 3. Change the "YOUR_TOKEN_HERE" part of the code (bot.py) with your previously gotten token (refer to point 6. in "Discord Developer Portal" instructions)
 
 ## Running the bot
-1. Move to where you have your bot.py file and run the following:
-```python bot.py```
+1. Move to where you have your bot.py file and run the following: `python bot.py`
