@@ -47,6 +47,6 @@ pip install youtube-search
 ```py
 pip install django
 ```
-2. Download the required files (Website) and unzip the folder to the desired location
+2. Download the required files (Website/) and unzip the folder to the desired location
 3. In the Command Line Terminal, move to the folder where you've extracted the files (to where you have manage.py) and run the following command:
 `python manage.py runserver`
