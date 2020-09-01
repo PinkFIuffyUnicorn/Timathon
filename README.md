@@ -1,6 +1,7 @@
 # Our Setup
 
 Discord Bot Invite: https://discord.com/oauth2/authorize?client_id=436592463529115658&scope=bot&permissions=0</br>
+Interactive Website: http://timathon.ddns.net/home/</br>
 
 # Discord Bot Setup
 
