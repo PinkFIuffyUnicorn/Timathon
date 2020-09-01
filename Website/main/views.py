@@ -27,7 +27,7 @@ def index(response):
     return render(response, "main/index.html", {})
 
 def generator(response):
-	r = requests.get("http://timathon.ddns.net:19348/").json()
+	r = requests.get("http://timathon.ddns.net:19348/api").json()
 	imageUrl = r["image_url"]
 	caption = r["caption"]
 	context = {'imageUrl':imageUrl,'caption':caption}

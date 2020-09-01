@@ -200,7 +200,7 @@ async def browser(ctx, url):
 
 @bot.command(pass_context=True, brief="Usage: ~generateCaption", description="Generates a caption from a random dog image")
 async def generateCaption(ctx):
-    r = requests.get("http://timathon.ddns.net:19348/").json()
+    r = requests.get("http://timathon.ddns.net:19348/api").json()
     await ctx.message.channel.send(r["image_url"])
     await ctx.message.channel.send("**Caption:** " + r["caption"])
 
