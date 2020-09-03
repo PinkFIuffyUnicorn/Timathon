@@ -1,7 +1,8 @@
 # Our Setup
+Discord Server Invite To Test Discord Bot: https://discord.gg/mT4Amy7 (type ~help for commands)</br>
+Website: http://timathon.ddns.net/home/</br>
 
-Discord Bot Invite: https://discord.com/oauth2/authorize?client_id=436592463529115658&scope=bot&permissions=0</br>
-Interactive Website: http://timathon.ddns.net/home/</br>
+Invite Discord Bot To Your Server: https://discord.com/oauth2/authorize?client_id=436592463529115658&scope=bot&permissions=0</br>
 
 # Discord Bot Setup
 
